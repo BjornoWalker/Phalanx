@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+backend/.venv/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment & secrets
+.env
+.env.*
+*.pem
+*.key
+
+# User settings (contains local preferences, not code)
+# Users will generate their own on first run
+# ~/.phalanx/settings.json is already outside the repo
+
+# Development-specific files
+CLAUDE.md
+Plan-layout.txt
+PHALANX_V2.md
+PHALANX_V3.md
+
+# IDE & tools
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
