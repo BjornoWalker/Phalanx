@@ -156,7 +156,19 @@ curl -L "https://storage.lczero.org/files/networks-contrib/t1-256x10-distilled-s
 
 Once installed, select "Lc0" or "Both" in Settings > Analysis > Engine.
 
-### 8. (Optional) Create a global shortcut
+### 8. (Optional) Install Syzygy endgame tablebases
+
+Syzygy tablebases provide perfect win/draw/loss results for all positions with 5 or fewer pieces (~938 MB). Without them, the app works fine — the engine just handles endgames on its own.
+
+```bash
+./scripts/download-syzygy
+```
+
+This downloads all 3-4-5 piece `.rtbw` and `.rtbz` files from [Lichess](https://tablebase.lichess.ovh/tables/standard/) into `~/.phalanx/syzygy/`. The script skips files that already exist, so it's safe to re-run if interrupted. The app will detect them automatically on next launch.
+
+You can verify the status in Settings > Endgame Tablebase.
+
+### 9. (Optional) Create a global shortcut
 
 ```bash
 ln -sf "$(pwd)/scripts/chess" /usr/local/bin/chess

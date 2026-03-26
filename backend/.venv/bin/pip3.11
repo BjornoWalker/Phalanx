@@ -1,4 +1,4 @@
-#!/Users/bjorn.walker/PycharmProjects/local-chess-engine/backend/.venv/bin/python3.11
+#!/Users/bjornwalker/PycharmProjects/Phalanx/backend/.venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
