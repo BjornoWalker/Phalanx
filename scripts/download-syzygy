@@ -1,0 +1,68 @@
+#!/bin/bash
+set -e
+
+SYZYGY_DIR="$HOME/.phalanx/syzygy"
+WDL_URL="https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl"
+DTZ_URL="https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz"
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+TABLES=(
+    # 3-piece
+    KBvK KNvK KPvK KQvK KRvK
+    # 4-piece
+    KBBvK KBNvK KBPvK KBvKB KBvKN KBvKP
+    KNNvK KNPvK KNvKN KNvKP KPPvK KPvKP
+    KQBvK KQNvK KQPvK KQQvK KQRvK
+    KQvKB KQvKN KQvKP KQvKQ KQvKR
+    KRBvK KRNvK KRPvK KRRvK KRvKB KRvKN KRvKP KRvKR
+    # 5-piece
+    KBBBvK KBBNvK KBBPvK KBBvKB KBBvKN KBBvKP KBBvKQ KBBvKR
+    KBNNvK KBNPvK KBNvKB KBNvKN KBNvKP KBNvKQ KBNvKR
+    KBPPvK KBPvKB KBPvKN KBPvKP KBPvKQ KBPvKR
+    KNNNvK KNNPvK KNNvKB KNNvKN KNNvKP KNNvKQ KNNvKR
+    KNPPvK KNPvKB KNPvKN KNPvKP KNPvKQ KNPvKR
+    KPPPvK KPPvKB KPPvKN KPPvKP KPPvKQ KPPvKR
+    KQBBvK KQBNvK KQBPvK KQBvKB KQBvKN KQBvKP KQBvKQ KQBvKR
+    KQNNvK KQNPvK KQNvKB KQNvKN KQNvKP KQNvKQ KQNvKR
+    KQPPvK KQPvKB KQPvKN KQPvKP KQPvKQ KQPvKR
+    KQQBvK KQQNvK KQQPvK KQQQvK KQQRvK KQQvKB KQQvKN KQQvKP
+    KQQvKQ KQQvKR
+    KQRBvK KQRNvK KQRPvK KQRRvK KQRvKB KQRvKN KQRvKP KQRvKQ
+    KQRvKR
+    KRBBvK KRBNvK KRBPvK KRBvKB KRBvKN KRBvKP KRBvKQ KRBvKR
+    KRNNvK KRNPvK KRNvKB KRNvKN KRNvKP KRNvKQ KRNvKR
+    KRPPvK KRPvKB KRPvKN KRPvKP KRPvKQ KRPvKR
+    KRRBvK KRRNvK KRRPvK KRRRvK KRRvKB KRRvKN KRRvKP KRRvKQ
+    KRRvKR
+)
+
+echo -e "${GREEN}Downloading Syzygy 3-4-5 piece tablebases (~938 MB)${NC}"
+echo "Destination: $SYZYGY_DIR"
+echo ""
+
+mkdir -p "$SYZYGY_DIR"
+
+TOTAL=${#TABLES[@]}
+COUNT=0
+
+for name in "${TABLES[@]}"; do
+    COUNT=$((COUNT + 1))
+
+    # Download WDL (.rtbw)
+    if [ ! -f "$SYZYGY_DIR/${name}.rtbw" ]; then
+        printf "[%3d/%d] %s.rtbw\n" "$COUNT" "$TOTAL" "$name"
+        curl -sL "$WDL_URL/${name}.rtbw" -o "$SYZYGY_DIR/${name}.rtbw"
+    fi
+
+    # Download DTZ (.rtbz)
+    if [ ! -f "$SYZYGY_DIR/${name}.rtbz" ]; then
+        printf "[%3d/%d] %s.rtbz\n" "$COUNT" "$TOTAL" "$name"
+        curl -sL "$DTZ_URL/${name}.rtbz" -o "$SYZYGY_DIR/${name}.rtbz"
+    fi
+done
+
+echo ""
+echo -e "${GREEN}Done.${NC} $(ls "$SYZYGY_DIR"/*.rtbw 2>/dev/null | wc -l | tr -d ' ') WDL + $(ls "$SYZYGY_DIR"/*.rtbz 2>/dev/null | wc -l | tr -d ' ') DTZ files in $SYZYGY_DIR"
