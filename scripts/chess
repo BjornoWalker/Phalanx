@@ -50,7 +50,7 @@ source "$BACKEND_DIR/.venv/bin/activate"
 # Install Python dependencies if needed
 if [ ! -f "$BACKEND_DIR/.venv/.deps_installed" ] || [ "$BACKEND_DIR/requirements.txt" -nt "$BACKEND_DIR/.venv/.deps_installed" ]; then
     echo "Installing Python dependencies..."
-    pip install -q -r "$BACKEND_DIR/requirements.txt"
+    python3 -m pip install -q -r "$BACKEND_DIR/requirements.txt"
     touch "$BACKEND_DIR/.venv/.deps_installed"
 fi
 
