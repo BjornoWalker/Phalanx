@@ -21,7 +21,7 @@ describe('exportAnnotatedPgn', () => {
   it('generates valid PGN for empty tree', () => {
     const tree = createEmptyTree();
     const pgn = exportAnnotatedPgn(tree);
-    expect(pgn).toContain('[Event "Local Chess Engine Analysis"]');
+    expect(pgn).toContain('[Event "Phalanx Analysis"]');
     expect(pgn).toContain('*');
   });
 

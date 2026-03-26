@@ -4,7 +4,7 @@ from pathlib import Path
 import chess
 import chess.syzygy
 
-SYZYGY_PATH = Path.home() / ".local-chess-engine" / "syzygy"
+SYZYGY_PATH = Path.home() / ".phalanx" / "syzygy"
 
 
 class SyzygyProber:

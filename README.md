@@ -1,4 +1,4 @@
-# Local Chess Engine
+# Phalanx
 
 A fully local chess application for macOS with real-time Stockfish analysis, Chess.com game review, interactive coaching, puzzle training, and opening drills — all running from a single terminal command.
 
@@ -94,7 +94,7 @@ A fully local chess application for macOS with real-time Stockfish analysis, Che
 
 ```bash
 git clone <repository-url>
-cd local-chess-engine
+cd phalanx
 ```
 
 ### 2. Install Stockfish
@@ -146,12 +146,12 @@ You can also download models directly from the Settings tab in the app. Any Olla
 brew install lc0
 ```
 
-Lc0 requires a neural net weights file. Download one and place it at `~/.local-chess-engine/lc0/weights.pb.gz`:
+Lc0 requires a neural net weights file. Download one and place it at `~/.phalanx/lc0/weights.pb.gz`:
 
 ```bash
-mkdir -p ~/.local-chess-engine/lc0
+mkdir -p ~/.phalanx/lc0
 curl -L "https://storage.lczero.org/files/networks-contrib/t1-256x10-distilled-swa-2432500.pb.gz" \
-  -o ~/.local-chess-engine/lc0/weights.pb.gz
+  -o ~/.phalanx/lc0/weights.pb.gz
 ```
 
 Once installed, select "Lc0" or "Both" in Settings > Analysis > Engine.
@@ -318,7 +318,7 @@ it('follows first child for mainline', () => {
 ### File Structure
 
 ```
-local-chess-engine/
+phalanx/
 ├── backend/                     # Python 3.11+ / FastAPI
 │   ├── app/
 │   │   ├── main.py              # App entry, engine lifecycle, WebSocket routing
@@ -384,12 +384,12 @@ local-chess-engine/
 
 | Data | Location | Size |
 |------|----------|------|
-| Settings | `~/.local-chess-engine/settings.json` | <1 KB |
-| Puzzle database | `~/.local-chess-engine/puzzles.db` | ~645 MB |
-| Opening repertoire | `~/.local-chess-engine/repertoire.json` | Varies |
+| Settings | `~/.phalanx/settings.json` | <1 KB |
+| Puzzle database | `~/.phalanx/puzzles.db` | ~645 MB |
+| Opening repertoire | `~/.phalanx/repertoire.json` | Varies |
 | Analysis cache | Browser IndexedDB (`ChessAnalysisCache`) | Grows over time, auto-expires after 30 days |
-| Syzygy tablebases | `~/.local-chess-engine/syzygy/` | ~938 MB (5-piece) |
-| Lc0 neural net | `~/.local-chess-engine/lc0/weights.pb.gz` | ~35 MB |
+| Syzygy tablebases | `~/.phalanx/syzygy/` | ~938 MB (5-piece) |
+| Lc0 neural net | `~/.phalanx/lc0/weights.pb.gz` | ~35 MB |
 | Ollama models | `~/.ollama/models/` | 2–12 GB per model |
 
 ### Ollama Model Management
@@ -414,7 +414,7 @@ ollama pull <model-name> # download (can also be done from Settings UI)
 
 ## Configuration
 
-All settings are configurable from the Settings tab and persist at `~/.local-chess-engine/settings.json`.
+All settings are configurable from the Settings tab and persist at `~/.phalanx/settings.json`.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -466,7 +466,7 @@ ollama serve    # start in a separate terminal
 If Ollama is unavailable, the coach falls back to template-based feedback automatically.
 
 **Puzzles not loading**
-The puzzle database must be imported first. If `~/.local-chess-engine/puzzles.db` doesn't exist, see the development setup docs in `backend/README.md` for the import script.
+The puzzle database must be imported first. If `~/.phalanx/puzzles.db` doesn't exist, see the development setup docs in `backend/README.md` for the import script.
 
 **Chess.com returns no games**
 Usernames are auto-lowercased. The app searches up to 12 months of history. If the player has very few recent games, try a broader search or upload a PGN file.

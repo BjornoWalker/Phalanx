@@ -67,7 +67,7 @@ Application entry point. Manages:
 
 | File | Purpose |
 |------|---------|
-| `puzzle_db.py` | `PuzzleDB` — SQLite interface to the Lichess puzzle database at `~/.local-chess-engine/puzzles.db`. Queries by rating range and tactical themes. |
+| `puzzle_db.py` | `PuzzleDB` — SQLite interface to the Lichess puzzle database at `~/.phalanx/puzzles.db`. Queries by rating range and tactical themes. |
 | `puzzle_service.py` | `PuzzleSession` — manages solving a single puzzle. Validates player moves against the expected solution sequence, provides progressive hints (piece → square → full move), auto-plays opponent responses. |
 
 **Puzzle database setup:**
@@ -77,7 +77,7 @@ The puzzle database is a filtered subset of the [Lichess puzzle database](https:
 
 | File | Purpose |
 |------|---------|
-| `repertoire.py` | `RepertoireDB` — JSON-based storage for personal opening lines at `~/.local-chess-engine/repertoire.json`. Supports PGN import, SM-2 spaced repetition scheduling, drill result recording. |
+| `repertoire.py` | `RepertoireDB` — JSON-based storage for personal opening lines at `~/.phalanx/repertoire.json`. Supports PGN import, SM-2 spaced repetition scheduling, drill result recording. |
 
 **SM-2 spaced repetition:**
 - Correct drill: `interval *= ease_factor`, ease increases (max 3.0)
@@ -98,7 +98,7 @@ The puzzle database is a filtered subset of the [Lichess puzzle database](https:
 Pydantic models for all request/response types: `SettingsModel`, `MoveClassification` enum, `AnalyzedMove`, `GameAnalysis`, `ParsedGame`, `CoachStartRequest`, etc.
 
 ### `app/settings_store.py`
-Simple JSON file persistence at `~/.local-chess-engine/settings.json`. Functions: `load() → SettingsModel`, `save(settings)`.
+Simple JSON file persistence at `~/.phalanx/settings.json`. Functions: `load() → SettingsModel`, `save(settings)`.
 
 ## Dependencies
 

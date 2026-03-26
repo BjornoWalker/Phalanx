@@ -7,7 +7,7 @@ import chess.engine
 
 from app.engine.stockfish import AnalysisResult
 
-WEIGHTS_PATH = Path.home() / ".local-chess-engine" / "lc0" / "weights.pb.gz"
+WEIGHTS_PATH = Path.home() / ".phalanx" / "lc0" / "weights.pb.gz"
 
 
 class Lc0Adapter:

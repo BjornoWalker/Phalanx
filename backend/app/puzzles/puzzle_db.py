@@ -2,7 +2,7 @@ import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path.home() / ".local-chess-engine" / "puzzles.db"
+DB_PATH = Path.home() / ".phalanx" / "puzzles.db"
 
 # All distinct theme tokens across the database
 KNOWN_THEMES = [

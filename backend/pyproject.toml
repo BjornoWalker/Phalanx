@@ -1,5 +1,5 @@
 [project]
-name = "local-chess-engine"
+name = "phalanx"
 version = "2.3.0"
 description = "A local chess application with analysis, game review, and coaching"
 requires-python = ">=3.11"

@@ -73,6 +73,8 @@ function App() {
               className="absolute inset-0"
               style={{
                 visibility: activeTab === tab.id ? 'visible' : 'hidden',
+                opacity: activeTab === tab.id ? 1 : 0,
+                pointerEvents: activeTab === tab.id ? 'auto' : 'none',
                 zIndex: activeTab === tab.id ? 1 : 0,
               }}
             >

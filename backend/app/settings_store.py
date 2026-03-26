@@ -4,7 +4,7 @@ from pathlib import Path
 
 from app.models.schemas import SettingsModel
 
-SETTINGS_DIR = Path.home() / ".local-chess-engine"
+SETTINGS_DIR = Path.home() / ".phalanx"
 SETTINGS_FILE = SETTINGS_DIR / "settings.json"
 
 

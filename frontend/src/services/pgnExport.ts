@@ -31,7 +31,7 @@ export function exportAnnotatedPgn(
 
   // Headers
   const h = {
-    Event: 'Local Chess Engine Analysis',
+    Event: 'Phalanx Analysis',
     Site: 'Local',
     Date: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
     White: '?',

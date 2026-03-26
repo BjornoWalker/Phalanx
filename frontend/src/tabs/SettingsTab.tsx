@@ -624,7 +624,7 @@ export default function SettingsTab() {
           About
         </h3>
         <div className="text-xs space-y-1" style={{ color: 'var(--text-muted)' }}>
-          <p>Local Chess Engine v2.3.0</p>
+          <p>Phalanx v2.3.0</p>
           <p>Powered by Stockfish 18 + Lc0</p>
         </div>
       </section>

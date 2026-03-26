@@ -8,7 +8,7 @@ import chess
 import chess.pgn
 import io
 
-REPERTOIRE_PATH = Path.home() / ".local-chess-engine" / "repertoire.json"
+REPERTOIRE_PATH = Path.home() / ".phalanx" / "repertoire.json"
 
 
 class RepertoireDB:

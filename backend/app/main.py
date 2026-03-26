@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     print("Backend shutting down")
 
 
-app = FastAPI(title="Local Chess Engine", lifespan=lifespan)
+app = FastAPI(title="Phalanx", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
