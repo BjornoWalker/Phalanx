@@ -1,0 +1,90 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+BACKEND_DIR="$PROJECT_DIR/backend"
+FRONTEND_DIR="$PROJECT_DIR/frontend"
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo -e "${GREEN}Local Chess Engine${NC}"
+echo ""
+
+# Check prerequisites
+if ! command -v stockfish &> /dev/null; then
+    echo -e "${RED}Stockfish not found.${NC} Install with: brew install stockfish"
+    exit 1
+fi
+
+if ! command -v python3 &> /dev/null; then
+    echo -e "${RED}Python 3 is required but not installed.${NC}"
+    exit 1
+fi
+
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}Node.js is required but not installed.${NC}"
+    exit 1
+fi
+
+# Cleanup on exit
+cleanup() {
+    echo -e "\n${YELLOW}Shutting down...${NC}"
+    kill $BACKEND_PID 2>/dev/null
+    wait $BACKEND_PID 2>/dev/null
+    echo -e "${GREEN}Stopped.${NC}"
+    exit 0
+}
+trap cleanup SIGINT SIGTERM
+
+# Setup Python virtual environment
+if [ ! -d "$BACKEND_DIR/.venv" ]; then
+    echo "Setting up Python virtual environment..."
+    python3 -m venv "$BACKEND_DIR/.venv"
+fi
+source "$BACKEND_DIR/.venv/bin/activate"
+
+# Install Python dependencies if needed
+if [ ! -f "$BACKEND_DIR/.venv/.deps_installed" ] || [ "$BACKEND_DIR/requirements.txt" -nt "$BACKEND_DIR/.venv/.deps_installed" ]; then
+    echo "Installing Python dependencies..."
+    pip install -q -r "$BACKEND_DIR/requirements.txt"
+    touch "$BACKEND_DIR/.venv/.deps_installed"
+fi
+
+# Install frontend dependencies if needed
+if [ ! -d "$FRONTEND_DIR/node_modules" ]; then
+    echo "Installing frontend dependencies..."
+    cd "$FRONTEND_DIR" && npm install --silent
+fi
+
+# Build frontend if needed
+if [ ! -d "$FRONTEND_DIR/dist" ] || [ "$FRONTEND_DIR/src" -nt "$FRONTEND_DIR/dist/index.html" ]; then
+    echo "Building frontend..."
+    cd "$FRONTEND_DIR" && npm run build --silent 2>/dev/null
+fi
+
+# Start backend
+echo -e "${GREEN}Starting server...${NC}"
+cd "$BACKEND_DIR" && uvicorn app.main:app --host 127.0.0.1 --port 8000 --log-level warning &
+BACKEND_PID=$!
+
+# Wait for backend
+for i in {1..30}; do
+    if curl -s http://127.0.0.1:8000/api/health > /dev/null 2>&1; then
+        break
+    fi
+    sleep 0.5
+done
+
+# Open browser
+echo -e "${GREEN}Opening http://127.0.0.1:8000${NC}"
+open http://127.0.0.1:8000
+
+echo -e "${GREEN}Running at http://127.0.0.1:8000${NC}"
+echo -e "${YELLOW}Press Ctrl+C to stop.${NC}"
+
+# Wait
+wait $BACKEND_PID

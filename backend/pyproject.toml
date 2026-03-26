@@ -1,0 +1,18 @@
+[project]
+name = "local-chess-engine"
+version = "2.3.0"
+description = "A local chess application with analysis, game review, and coaching"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "python-chess>=1.999",
+    "pydantic>=2.10.0",
+    "httpx>=0.28.0",
+    "websockets>=14.0",
+    "ollama>=0.4.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
