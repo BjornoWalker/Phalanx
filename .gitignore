@@ -26,8 +26,8 @@ frontend/dist/
 # Development-specific files
 CLAUDE.md
 Plan-layout.txt
-PHALANX_V2.md
-PHALANX_V3.md
+LOCAL_CHESS_ENGINE_V2.md
+LOCAL_CHESS_ENGINE_V3.md
 
 # IDE & tools
 .idea/
