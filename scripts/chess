@@ -30,6 +30,12 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
+# Check optional: Puzzle database
+if [ ! -f "$HOME/.phalanx/puzzles.db" ]; then
+    echo -e "${YELLOW}Puzzle database not found.${NC} To enable the Puzzles tab, run:"
+    echo -e "  ${GREEN}./scripts/download-puzzles${NC}"
+fi
+
 # Check optional: Syzygy tablebases
 SYZYGY_DIR="$HOME/.phalanx/syzygy"
 if [ ! -d "$SYZYGY_DIR" ] || [ -z "$(ls "$SYZYGY_DIR"/*.rtbw 2>/dev/null)" ]; then

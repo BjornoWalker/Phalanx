@@ -1,0 +1,134 @@
+#!/bin/bash
+set -e
+
+PHALANX_DIR="$HOME/.phalanx"
+DB_PATH="$PHALANX_DIR/puzzles.db"
+CSV_URL="https://database.lichess.org/lichess_db_puzzle.csv.zst"
+COMPRESSED="$PHALANX_DIR/lichess_db_puzzle.csv.zst"
+CSV_FILE="$PHALANX_DIR/lichess_db_puzzle.csv"
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Resolve script directory for the Python import script
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || readlink "$0" 2>/dev/null || echo "$0")")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+BACKEND_DIR="$PROJECT_DIR/backend"
+
+echo -e "${GREEN}Phalanx Puzzle Database Setup${NC}"
+echo ""
+
+if [ -f "$DB_PATH" ]; then
+    echo -e "${YELLOW}Puzzle database already exists at $DB_PATH${NC}"
+    read -p "Re-download and rebuild? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Cancelled."
+        exit 0
+    fi
+    rm -f "$DB_PATH"
+fi
+
+# Check for zstd
+if ! command -v zstd &> /dev/null; then
+    echo -e "${YELLOW}zstd not found.${NC} Installing with Homebrew..."
+    brew install zstd
+fi
+
+mkdir -p "$PHALANX_DIR"
+
+# Download
+if [ ! -f "$COMPRESSED" ]; then
+    echo "Downloading Lichess puzzle database (~300 MB compressed)..."
+    curl -L --progress-bar "$CSV_URL" -o "$COMPRESSED"
+else
+    echo "Using cached compressed file."
+fi
+
+# Decompress
+echo "Decompressing..."
+zstd -d -f "$COMPRESSED" -o "$CSV_FILE"
+
+# Set up venv if needed
+if [ ! -d "$BACKEND_DIR/.venv" ]; then
+    python3 -m venv "$BACKEND_DIR/.venv"
+fi
+source "$BACKEND_DIR/.venv/bin/activate"
+
+# Import into SQLite
+echo "Importing puzzles (rating 600-2400, popularity ≥70, plays ≥500)..."
+python3 -c "
+import csv
+import sqlite3
+import sys
+
+db_path = '$DB_PATH'
+csv_path = '$CSV_FILE'
+
+conn = sqlite3.connect(db_path)
+conn.execute('''
+    CREATE TABLE IF NOT EXISTS puzzles (
+        id TEXT PRIMARY KEY,
+        fen TEXT NOT NULL,
+        moves TEXT NOT NULL,
+        rating INTEGER NOT NULL,
+        themes TEXT NOT NULL DEFAULT ''
+    )
+''')
+
+count = 0
+batch = []
+BATCH_SIZE = 10000
+
+with open(csv_path, 'r') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        rating = int(row['Rating'])
+        popularity = int(row['Popularity'])
+        nb_plays = int(row['NbPlays'])
+
+        if rating < 600 or rating > 2400:
+            continue
+        if popularity < 70:
+            continue
+        if nb_plays < 500:
+            continue
+
+        batch.append((
+            row['PuzzleId'],
+            row['FEN'],
+            row['Moves'],
+            rating,
+            row.get('Themes', ''),
+        ))
+        count += 1
+
+        if len(batch) >= BATCH_SIZE:
+            conn.executemany('INSERT OR IGNORE INTO puzzles VALUES (?, ?, ?, ?, ?)', batch)
+            conn.commit()
+            sys.stdout.write(f'\r  {count:,} puzzles imported...')
+            sys.stdout.flush()
+            batch = []
+
+if batch:
+    conn.executemany('INSERT OR IGNORE INTO puzzles VALUES (?, ?, ?, ?, ?)', batch)
+    conn.commit()
+
+print(f'\r  {count:,} puzzles imported.      ')
+
+print('  Creating indexes...')
+conn.execute('CREATE INDEX IF NOT EXISTS idx_rating ON puzzles(rating)')
+conn.commit()
+conn.close()
+print('  Done.')
+"
+
+# Cleanup
+echo "Cleaning up..."
+rm -f "$CSV_FILE" "$COMPRESSED"
+
+SIZE_MB=$(du -m "$DB_PATH" | cut -f1)
+echo ""
+echo -e "${GREEN}Puzzle database ready.${NC} ${SIZE_MB} MB at $DB_PATH"

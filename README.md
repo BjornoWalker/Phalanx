@@ -118,6 +118,7 @@ cd ..
 ```bash
 cd frontend
 npm install
+
 npm run build
 cd ..
 ```
@@ -130,7 +131,17 @@ cd ..
 
 This will start the server and open your browser to http://127.0.0.1:8000. Press `Ctrl+C` to stop.
 
-### 6. (Optional) Install Ollama for LLM coaching
+### 6. (Optional) Download the puzzle database
+
+The Puzzles tab requires a local SQLite database built from the [Lichess puzzle database](https://database.lichess.org/) (~645 MB). Without it, all other tabs still work.
+
+```bash
+./scripts/download-puzzles
+```
+
+This downloads the Lichess puzzle CSV (~300 MB compressed), filters for quality puzzles (rating 600–2400, popularity ≥70, ≥500 plays), and builds `~/.phalanx/puzzles.db`. Requires `zstd` (installed automatically via Homebrew if missing).
+
+### 7. (Optional) Install Ollama for LLM coaching
 
 ```bash
 brew install ollama
@@ -140,7 +151,7 @@ ollama pull llama3.1:8b       # download a model (~4.7GB)
 
 You can also download models directly from the Settings tab in the app. Any Ollama-compatible model works.
 
-### 7. (Optional) Install Lc0 for neural net analysis
+### 8. (Optional) Install Lc0 for neural net analysis
 
 ```bash
 brew install lc0
@@ -156,7 +167,7 @@ curl -L "https://storage.lczero.org/files/networks-contrib/t1-256x10-distilled-s
 
 Once installed, select "Lc0" or "Both" in Settings > Analysis > Engine.
 
-### 8. (Optional) Install Syzygy endgame tablebases
+### 9. (Optional) Install Syzygy endgame tablebases
 
 Syzygy tablebases provide perfect win/draw/loss results for all positions with 5 or fewer pieces (~938 MB). Without them, the app works fine — the engine just handles endgames on its own.
 
@@ -168,7 +179,7 @@ This downloads all 3-4-5 piece `.rtbw` and `.rtbz` files from [Lichess](https://
 
 You can verify the status in Settings > Endgame Tablebase.
 
-### 9. (Optional) Create a global shortcut
+### 10. (Optional) Create a global shortcut
 
 ```bash
 ln -sf "$(pwd)/scripts/chess" /usr/local/bin/chess
@@ -478,7 +489,10 @@ ollama serve    # start in a separate terminal
 If Ollama is unavailable, the coach falls back to template-based feedback automatically.
 
 **Puzzles not loading**
-The puzzle database must be imported first. If `~/.phalanx/puzzles.db` doesn't exist, see the development setup docs in `backend/README.md` for the import script.
+```bash
+./scripts/download-puzzles
+```
+The puzzle database must be downloaded first. See step 6 in Installation.
 
 **Chess.com returns no games**
 Usernames are auto-lowercased. The app searches up to 12 months of history. If the player has very few recent games, try a broader search or upload a PGN file.
